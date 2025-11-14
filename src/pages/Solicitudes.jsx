@@ -2,18 +2,18 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import Button from '../components/UI/Button';
+import HeaderCentroFormador from '../components/UI/HeaderCentroFormador';
 import {
   BuildingOffice2Icon,
-  ArrowLeftIcon,
   CalendarDaysIcon,
-  AcademicCapIcon,
   UserGroupIcon,
   ClockIcon,
   CheckCircleIcon,
   XCircleIcon,
   EyeIcon,
   PlusIcon,
-  FunnelIcon
+  FunnelIcon,
+  DocumentTextIcon
 } from '@heroicons/react/24/outline';
 import { useNivelFormacion } from '../context/NivelFormacionContext';
 
@@ -140,103 +140,89 @@ const PortalSolicitudes = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Cargando solicitudes...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 dark:border-teal-400 mx-auto"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Cargando solicitudes...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => navigate('/dashboard')}
-                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <ArrowLeftIcon className="w-5 h-5" />
-              </button>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
-                  <BuildingOffice2Icon className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold text-gray-900">Mis Solicitudes</h1>
-                  <p className="text-sm text-gray-500">
-                    {centroInfo?.centro_formador?.nombre} - {nivelFormacion === 'pregrado' ? 'Pregrado' : 'Postgrado'}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <Button
-              variant="primary"
-              onClick={() => navigate('/solicitar')}
-              className="flex items-center gap-2"
-            >
-              <PlusIcon className="w-5 h-5" />
-              Nueva Solicitud
-            </Button>
-          </div>
+      <HeaderCentroFormador
+        titulo="Mis Solicitudes"
+        subtitulo={`${centroInfo?.centro_formador?.nombre} - ${nivelFormacion === 'pregrado' ? 'Pregrado' : 'Postgrado'}`}
+        icono={DocumentTextIcon}
+      />
+
+      {/* Botón Nueva Solicitud */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <div className="flex justify-end">
+          <Button
+            variant="primary"
+            onClick={() => navigate('/solicitar')}
+            className="flex items-center gap-2"
+          >
+            <PlusIcon className="w-5 h-5" />
+            Nueva Solicitud
+          </Button>
         </div>
-      </header>
+      </div>
 
       {/* Contenido */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Estadísticas */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Total</p>
-                <p className="text-3xl font-bold text-gray-900">{estadisticas.total}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total</p>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white">{estadisticas.total}</p>
               </div>
-              <BuildingOffice2Icon className="w-12 h-12 text-gray-400" />
+              <BuildingOffice2Icon className="w-12 h-12 text-gray-400 dark:text-gray-500" />
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Pendientes</p>
-                <p className="text-3xl font-bold text-yellow-600">{estadisticas.pendientes}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Pendientes</p>
+                <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-500">{estadisticas.pendientes}</p>
               </div>
-              <ClockIcon className="w-12 h-12 text-yellow-400" />
+              <ClockIcon className="w-12 h-12 text-yellow-400 dark:text-yellow-500" />
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Aprobadas</p>
-                <p className="text-3xl font-bold text-green-600">{estadisticas.aprobadas}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Aprobadas</p>
+                <p className="text-3xl font-bold text-green-600 dark:text-green-500">{estadisticas.aprobadas}</p>
               </div>
-              <CheckCircleIcon className="w-12 h-12 text-green-400" />
+              <CheckCircleIcon className="w-12 h-12 text-green-400 dark:text-green-500" />
             </div>
           </div>
 
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Rechazadas</p>
-                <p className="text-3xl font-bold text-red-600">{estadisticas.rechazadas}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Rechazadas</p>
+                <p className="text-3xl font-bold text-red-600 dark:text-red-500">{estadisticas.rechazadas}</p>
               </div>
-              <XCircleIcon className="w-12 h-12 text-red-400" />
+              <XCircleIcon className="w-12 h-12 text-red-400 dark:text-red-500" />
             </div>
           </div>
         </div>
 
         {/* Filtros */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6 transition-colors duration-300">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <FunnelIcon className="w-5 h-5 text-gray-400" />
-              <span className="text-sm font-medium text-gray-700">Filtrar por estado:</span>
+              <FunnelIcon className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Filtrar por estado:</span>
             </div>
             <div className="flex gap-2">
               {[
@@ -250,8 +236,8 @@ const PortalSolicitudes = () => {
                   onClick={() => setFiltroEstado(filtro.key)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                     filtroEstado === filtro.key
-                      ? 'bg-teal-100 text-teal-800 border border-teal-200'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 border border-teal-200 dark:border-teal-700'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                   }`}
                 >
                   {filtro.label} ({filtro.count})
@@ -262,16 +248,16 @@ const PortalSolicitudes = () => {
         </div>
 
         {/* Lista de Solicitudes */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
           {solicitudesFiltradas.length === 0 ? (
             <div className="p-12 text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <BuildingOffice2Icon className="w-8 h-8 text-gray-400" />
+              <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                <BuildingOffice2Icon className="w-8 h-8 text-gray-400 dark:text-gray-500" />
               </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
                 {filtroEstado === 'todas' ? 'No tienes solicitudes' : `No tienes solicitudes ${filtroEstado}s`}
               </h3>
-              <p className="text-gray-500 mb-6">
+              <p className="text-gray-500 dark:text-gray-400 mb-6">
                 {filtroEstado === 'todas' 
                   ? 'Crea tu primera solicitud de cupos clínicos'
                   : 'Cambia el filtro para ver otras solicitudes'
@@ -287,13 +273,13 @@ const PortalSolicitudes = () => {
               )}
             </div>
           ) : (
-            <div className="divide-y divide-gray-200">
+            <div className="divide-y divide-gray-200 dark:divide-gray-700">
               {solicitudesFiltradas.map((solicitud) => (
-                <div key={solicitud.id} className="p-6 hover:bg-gray-50 transition-colors">
+                <div key={solicitud.id} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                   <div className="flex items-center justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-semibold text-gray-900">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                           {solicitud.especialidad}
                         </h3>
                         <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border ${
@@ -304,7 +290,7 @@ const PortalSolicitudes = () => {
                         </span>
                       </div>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 dark:text-gray-400">
                         <div className="flex items-center gap-2">
                           <UserGroupIcon className="w-4 h-4" />
                           <span>{solicitud.numero_cupos} cupos</span>
@@ -320,14 +306,14 @@ const PortalSolicitudes = () => {
                       </div>
                       
                       {solicitud.comentarios && (
-                        <p className="mt-2 text-sm text-gray-600 line-clamp-2">
+                        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
                           {solicitud.comentarios}
                         </p>
                       )}
                       
                       {solicitud.motivo_rechazo && (
-                        <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
-                          <p className="text-sm text-red-800">
+                        <div className="mt-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                          <p className="text-sm text-red-800 dark:text-red-300">
                             <strong>Motivo de rechazo:</strong> {solicitud.motivo_rechazo}
                           </p>
                         </div>
@@ -337,7 +323,7 @@ const PortalSolicitudes = () => {
                     <div className="ml-6">
                       <button
                         onClick={() => handleVerDetalle(solicitud)}
-                        className="p-2 text-gray-600 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-colors"
+                        className="p-2 text-gray-600 dark:text-gray-400 hover:text-teal-600 dark:hover:text-teal-400 hover:bg-teal-50 dark:hover:bg-teal-900/20 rounded-lg transition-colors"
                         title="Ver detalles"
                       >
                         <EyeIcon className="w-5 h-5" />
@@ -353,14 +339,14 @@ const PortalSolicitudes = () => {
 
       {/* Modal de Detalle */}
       {modalDetalle && solicitudSeleccionada && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-gray-200">
+        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto transition-colors duration-300">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-gray-900">Detalle de Solicitud</h2>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Detalle de Solicitud</h2>
                 <button
                   onClick={() => setModalDetalle(false)}
-                  className="p-2 text-gray-400 hover:text-gray-600 rounded-lg"
+                  className="p-2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg"
                 >
                   <XCircleIcon className="w-6 h-6" />
                 </button>
@@ -370,12 +356,12 @@ const PortalSolicitudes = () => {
             <div className="p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Especialidad</label>
-                  <p className="text-gray-900">{solicitudSeleccionada.especialidad}</p>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Especialidad</label>
+                  <p className="text-gray-900 dark:text-white">{solicitudSeleccionada.especialidad}</p>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Estado</label>
                   <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border ${
                     getEstadoColor(solicitudSeleccionada.estado)
                   }`}>
@@ -385,47 +371,47 @@ const PortalSolicitudes = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Número de Cupos</label>
-                  <p className="text-gray-900">{solicitudSeleccionada.numero_cupos}</p>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Número de Cupos</label>
+                  <p className="text-gray-900 dark:text-white">{solicitudSeleccionada.numero_cupos}</p>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Solicitante</label>
-                  <p className="text-gray-900">{solicitudSeleccionada.solicitante || 'No especificado'}</p>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Solicitante</label>
+                  <p className="text-gray-900 dark:text-white">{solicitudSeleccionada.solicitante || 'No especificado'}</p>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Fecha de Inicio</label>
-                  <p className="text-gray-900">{formatearFecha(solicitudSeleccionada.fecha_inicio)}</p>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fecha de Inicio</label>
+                  <p className="text-gray-900 dark:text-white">{formatearFecha(solicitudSeleccionada.fecha_inicio)}</p>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Fecha de Término</label>
-                  <p className="text-gray-900">{formatearFecha(solicitudSeleccionada.fecha_termino)}</p>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fecha de Término</label>
+                  <p className="text-gray-900 dark:text-white">{formatearFecha(solicitudSeleccionada.fecha_termino)}</p>
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Fecha de Solicitud</label>
-                  <p className="text-gray-900">{formatearFecha(solicitudSeleccionada.created_at)}</p>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Fecha de Solicitud</label>
+                  <p className="text-gray-900 dark:text-white">{formatearFecha(solicitudSeleccionada.created_at)}</p>
                 </div>
               </div>
               
               {solicitudSeleccionada.comentarios && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Comentarios</label>
-                  <p className="text-gray-900 bg-gray-50 p-3 rounded-lg">{solicitudSeleccionada.comentarios}</p>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Comentarios</label>
+                  <p className="text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">{solicitudSeleccionada.comentarios}</p>
                 </div>
               )}
               
               {solicitudSeleccionada.motivo_rechazo && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Motivo de Rechazo</label>
-                  <p className="text-red-800 bg-red-50 p-3 rounded-lg border border-red-200">{solicitudSeleccionada.motivo_rechazo}</p>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Motivo de Rechazo</label>
+                  <p className="text-red-800 dark:text-red-300 bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800">{solicitudSeleccionada.motivo_rechazo}</p>
                 </div>
               )}
             </div>
             
-            <div className="p-6 border-t border-gray-200 flex justify-end">
+            <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end">
               <Button
                 variant="secondary"
                 onClick={() => setModalDetalle(false)}

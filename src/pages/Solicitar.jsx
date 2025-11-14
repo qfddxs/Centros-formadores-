@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import Button from '../components/UI/Button';
+import HeaderCentroFormador from '../components/UI/HeaderCentroFormador';
 import {
   BuildingOffice2Icon,
   ArrowLeftIcon,
@@ -20,6 +21,8 @@ const PortalSolicitar = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [cuposDisponibles, setCuposDisponibles] = useState(0);
+  const [cuposTotales, setCuposTotales] = useState(0);
   
   const [formData, setFormData] = useState({
     especialidad: '',
@@ -85,6 +88,13 @@ const PortalSolicitar = () => {
         .single();
 
       setCentroInfo(centroData);
+      
+      // Obtener cupos disponibles
+      if (centroData?.centro_formador) {
+        setCuposDisponibles(centroData.centro_formador.cupos_disponibles || 0);
+        setCuposTotales(centroData.centro_formador.cupos_totales || 0);
+      }
+      
       setFormData(prev => ({
         ...prev,
         solicitante: user.user_metadata?.nombre_completo || ''
@@ -122,6 +132,15 @@ const PortalSolicitar = () => {
 
       if (new Date(formData.fecha_termino) <= new Date(formData.fecha_inicio)) {
         throw new Error('La fecha de término debe ser posterior a la fecha de inicio');
+      }
+
+      // Validar cupos disponibles
+      if (formData.numero_cupos > cuposDisponibles) {
+        throw new Error(`No puedes solicitar más cupos de los disponibles. Tienes ${cuposDisponibles} cupos disponibles.`);
+      }
+
+      if (formData.numero_cupos <= 0) {
+        throw new Error('Debes solicitar al menos 1 cupo');
       }
 
       // Crear solicitud
@@ -188,35 +207,41 @@ const PortalSolicitar = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <ArrowLeftIcon className="w-5 h-5" />
-            </button>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center">
-                <DocumentTextIcon className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">Solicitar Cupos Clínicos</h1>
-                <p className="text-sm text-gray-500">
-                  {centroInfo?.centro_formador?.nombre} - {nivelFormacion === 'pregrado' ? 'Pregrado' : 'Postgrado'}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <HeaderCentroFormador
+        titulo="Solicitar Cupos Clínicos"
+        subtitulo={`${centroInfo?.centro_formador?.nombre} - ${nivelFormacion === 'pregrado' ? 'Pregrado' : 'Postgrado'}`}
+        icono={DocumentTextIcon}
+      />
 
       {/* Contenido */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+        {/* Indicador de Cupos Disponibles */}
+        <div className="mb-6 bg-gradient-to-r from-teal-500 to-cyan-600 rounded-xl p-6 text-white shadow-lg">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-teal-50 mb-1">Cupos Disponibles</p>
+              <p className="text-4xl font-bold">{cuposDisponibles}</p>
+              <p className="text-sm text-teal-50 mt-1">de {cuposTotales} cupos totales</p>
+            </div>
+            <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center">
+              <UserGroupIcon className="w-12 h-12" />
+            </div>
+          </div>
+          {cuposDisponibles === 0 && (
+            <div className="mt-4 p-3 bg-red-500/20 border border-red-300/30 rounded-lg">
+              <p className="text-sm font-medium">⚠️ No tienes cupos disponibles para solicitar</p>
+            </div>
+          )}
+          {cuposDisponibles > 0 && cuposDisponibles <= 5 && (
+            <div className="mt-4 p-3 bg-yellow-500/20 border border-yellow-300/30 rounded-lg">
+              <p className="text-sm font-medium">⚠️ Quedan pocos cupos disponibles</p>
+            </div>
+          )}
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 transition-colors duration-300">
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
               {error}
@@ -225,8 +250,8 @@ const PortalSolicitar = () => {
 
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Información de la Solicitud */}
-            <div className="bg-teal-50 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-teal-900 mb-4 flex items-center gap-2">
+            <div className="bg-teal-50 dark:bg-teal-900/20 rounded-lg p-6 transition-colors duration-300">
+              <h3 className="text-lg font-semibold text-teal-900 dark:text-teal-300 mb-4 flex items-center gap-2 transition-colors">
                 <AcademicCapIcon className="w-5 h-5" />
                 Información de la Solicitud
               </h3>
@@ -253,7 +278,10 @@ const PortalSolicitar = () => {
 
                 <div>
                   <label htmlFor="numero_cupos" className="block text-sm font-medium text-gray-700 mb-2">
-                    Número de Cupos *
+                    Número de Cupos * 
+                    <span className="text-xs text-gray-500 ml-2">
+                      (Máximo: {cuposDisponibles})
+                    </span>
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -264,22 +292,32 @@ const PortalSolicitar = () => {
                       name="numero_cupos"
                       id="numero_cupos"
                       min="1"
-                      max="50"
+                      max={cuposDisponibles}
                       required
                       value={formData.numero_cupos}
                       onChange={handleChange}
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      disabled={cuposDisponibles === 0}
+                      className={`block w-full pl-10 pr-3 py-3 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent ${
+                        formData.numero_cupos > cuposDisponibles 
+                          ? 'border-red-300 bg-red-50' 
+                          : 'border-gray-300'
+                      } ${cuposDisponibles === 0 ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                     />
                   </div>
+                  {formData.numero_cupos > cuposDisponibles && (
+                    <p className="mt-2 text-sm text-red-600">
+                      ⚠️ Excede los cupos disponibles ({cuposDisponibles})
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
 
             {/* Fechas */}
-            <div className="bg-blue-50 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-blue-900 mb-4 flex items-center gap-2">
+            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 transition-colors duration-300">
+              <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-300 mb-4 flex items-center gap-2 transition-colors">
                 <CalendarDaysIcon className="w-5 h-5" />
-                Período de Rotación
+                Duración de Práctica
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -318,8 +356,8 @@ const PortalSolicitar = () => {
             </div>
 
             {/* Información Adicional */}
-            <div className="bg-purple-50 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-purple-900 mb-4 flex items-center gap-2">
+            <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-6 transition-colors duration-300">
+              <h3 className="text-lg font-semibold text-purple-900 dark:text-purple-300 mb-4 flex items-center gap-2 transition-colors">
                 <BuildingOffice2Icon className="w-5 h-5" />
                 Información Adicional
               </h3>
@@ -370,10 +408,10 @@ const PortalSolicitar = () => {
               <Button
                 type="submit"
                 variant="primary"
-                disabled={submitting}
+                disabled={submitting || cuposDisponibles === 0 || formData.numero_cupos > cuposDisponibles}
                 className="min-w-[140px]"
               >
-                {submitting ? 'Enviando...' : 'Enviar Solicitud'}
+                {submitting ? 'Enviando...' : cuposDisponibles === 0 ? 'Sin Cupos Disponibles' : 'Enviar Solicitud'}
               </Button>
             </div>
           </form>
