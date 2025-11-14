@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
+import { motion } from 'framer-motion';
 import { BuildingOffice2Icon, EnvelopeIcon, LockClosedIcon, UserIcon, PhoneIcon, MapPinIcon } from '@heroicons/react/24/outline';
 import { useNivelFormacion } from '../context/NivelFormacionContext';
 
@@ -170,28 +171,38 @@ const PortalRegistro = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 flex items-center justify-center p-4">
-      <div className="max-w-2xl w-full">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 100, damping: 20, duration: 0.8 }}
+        className="max-w-2xl w-full"
+      >
         {/* Logo y Título */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-teal-600 rounded-2xl mb-4 shadow-lg">
+          <motion.div 
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 150, damping: 18, delay: 0.2 }}
+            className="inline-flex items-center justify-center w-20 h-20 bg-teal-600 rounded-2xl mb-4 shadow-lg"
+          >
             <BuildingOffice2Icon className="w-12 h-12 text-white" />
-          </div>
+          </motion.div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Registro de Centro Formador</h1>
           <p className="text-gray-600">Crea una cuenta para tu institución</p>
         </div>
 
         {/* Formulario */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="bg-white rounded-2xl shadow-xl p-8">
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-8">
             {/* Sección: Datos del Centro Formador */}
-            <div className="bg-teal-50 rounded-lg p-6 space-y-4">
-              <h3 className="text-lg font-semibold text-teal-900 mb-4">Datos del Centro Formador</h3>
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ type: 'spring', stiffness: 80, damping: 15, delay: 0.4 }} className="bg-teal-50 dark:bg-teal-900/20 rounded-lg p-6 space-y-6">
+              <h3 className="text-lg font-semibold text-teal-900 dark:text-teal-300">Datos del Centro Formador</h3>
               
               <div>
                 <label htmlFor="nombre_centro" className="block text-sm font-medium text-gray-700 mb-2">
@@ -208,7 +219,7 @@ const PortalRegistro = () => {
                     required
                     value={formData.nombre_centro}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors"
                     placeholder="Universidad de Chile"
                   />
                 </div>
@@ -224,7 +235,7 @@ const PortalRegistro = () => {
                   required
                   value={formData.nivel_formacion}
                   onChange={handleChange}
-                  className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors"
                 >
                   <option value="pregrado">Pregrado</option>
                   <option value="postgrado">Postgrado</option>
@@ -241,7 +252,7 @@ const PortalRegistro = () => {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-h-64 overflow-y-auto p-4 bg-white rounded-lg border border-gray-300">
                   {especialidadesDisponibles.map(especialidad => (
                     <label
-                      key={especialidad}
+                      key={especialidad} 
                       className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded"
                     >
                       <input
@@ -270,7 +281,7 @@ const PortalRegistro = () => {
                     id="codigo_centro"
                     value={formData.codigo_centro}
                     onChange={handleChange}
-                    className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors"
                     placeholder="12.345.678-9"
                   />
                 </div>
@@ -289,7 +300,7 @@ const PortalRegistro = () => {
                       id="telefono_centro"
                       value={formData.telefono_centro}
                       onChange={handleChange}
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors"
                       placeholder="+56 2 1234 5678"
                     />
                   </div>
@@ -310,16 +321,16 @@ const PortalRegistro = () => {
                     id="direccion_centro"
                     value={formData.direccion_centro}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors"
                     placeholder="Av. Independencia 1027, Santiago"
                   />
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Sección: Datos del Coordinador */}
-            <div className="bg-blue-50 rounded-lg p-6 space-y-4">
-              <h3 className="text-lg font-semibold text-blue-900 mb-4">Datos del Coordinador</h3>
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ type: 'spring', stiffness: 80, damping: 15, delay: 0.5 }} className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 space-y-6">
+              <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-300">Datos del Coordinador</h3>
               
               <div>
                 <label htmlFor="nombre_coordinador" className="block text-sm font-medium text-gray-700 mb-2">
@@ -336,7 +347,7 @@ const PortalRegistro = () => {
                     required
                     value={formData.nombre_coordinador}
                     onChange={handleChange}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                     placeholder="Juan Pérez González"
                   />
                 </div>
@@ -352,7 +363,7 @@ const PortalRegistro = () => {
                   id="cargo_coordinador"
                   value={formData.cargo_coordinador}
                   onChange={handleChange}
-                  className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   placeholder="Coordinador de Campos Clínicos"
                 />
               </div>
@@ -373,7 +384,7 @@ const PortalRegistro = () => {
                       required
                       value={formData.email_coordinador}
                       onChange={handleChange}
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                       placeholder="juan.perez@universidad.cl"
                     />
                   </div>
@@ -393,17 +404,17 @@ const PortalRegistro = () => {
                       id="telefono_coordinador"
                       value={formData.telefono_coordinador}
                       onChange={handleChange}
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                       placeholder="+56 9 1234 5678"
                     />
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Sección: Credenciales */}
-            <div className="bg-purple-50 rounded-lg p-6 space-y-4">
-              <h3 className="text-lg font-semibold text-purple-900 mb-4">Credenciales de Acceso</h3>
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ type: 'spring', stiffness: 80, damping: 15, delay: 0.6 }} className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-6 space-y-6">
+              <h3 className="text-lg font-semibold text-purple-900 dark:text-purple-300">Credenciales de Acceso</h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -421,7 +432,7 @@ const PortalRegistro = () => {
                       required
                       value={formData.password}
                       onChange={handleChange}
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
                       placeholder="••••••••"
                     />
                   </div>
@@ -443,13 +454,13 @@ const PortalRegistro = () => {
                       required
                       value={formData.confirmPassword}
                       onChange={handleChange}
-                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors"
                       placeholder="••••••••"
                     />
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             <button
               type="submit"
@@ -468,8 +479,8 @@ const PortalRegistro = () => {
               </Link>
             </p>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../supabaseClient';
 import Button from '../components/UI/Button';
 import HeaderCentroFormador from '../components/UI/HeaderCentroFormador';
@@ -193,21 +194,31 @@ const SolicitudRotacion = () => {
   }
 
   if (success) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 text-center">
-          <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">¡Solicitud Enviada!</h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            Tu solicitud de rotación ha sido enviada exitosamente.
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-500">Redirigiendo al dashboard...</p>
-        </div>
-      </div>
+    return ( // Pantalla de éxito animada
+      <AnimatePresence>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4"
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0, y: 50 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            className="max-w-md w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 text-center"
+          >
+            <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircleIcon className="w-8 h-8 text-green-600 dark:text-green-400" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">¡Solicitud Enviada!</h2>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">Tu solicitud de rotación ha sido enviada exitosamente.</p>
+            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1 mt-4 overflow-hidden">
+              <motion.div className="bg-green-500 h-1" initial={{ width: '0%' }} animate={{ width: '100%' }} transition={{ duration: 2, ease: 'linear' }} />
+            </div>
+          </motion.div>
+        </motion.div>
+      </AnimatePresence>
     );
   }
 
@@ -219,8 +230,8 @@ const SolicitudRotacion = () => {
         icono={UserGroupIcon}
       />
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 transition-colors duration-300">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-500">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-8 transition-colors duration-300">
           {error && (
             <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-300 text-sm">
               {error}
@@ -229,7 +240,7 @@ const SolicitudRotacion = () => {
 
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Información Básica */}
-            <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-6">
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-6">
               <h3 className="text-lg font-semibold text-purple-900 dark:text-purple-300 mb-4">Información de la Rotación</h3>
               
               <div className="space-y-4">
@@ -237,22 +248,27 @@ const SolicitudRotacion = () => {
                   <label htmlFor="especialidad" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Especialidad/Carrera *
                   </label>
-                  <input
-                    type="text"
-                    name="especialidad"
-                    id="especialidad"
-                    required
-                    value={formData.especialidad}
-                    onChange={handleChange}
-                    className="block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
-                    placeholder="Ej: Enfermería, Medicina, etc."
-                  />
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <UserGroupIcon className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      type="text"
+                      name="especialidad"
+                      id="especialidad"
+                      required
+                      value={formData.especialidad}
+                      onChange={handleChange}
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                      placeholder="Ej: Enfermería, Medicina, etc."
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Fechas */}
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6">
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6">
               <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-300 mb-4 flex items-center gap-2">
                 <CalendarDaysIcon className="w-5 h-5" />
                 Duración de Práctica
@@ -263,38 +279,48 @@ const SolicitudRotacion = () => {
                   <label htmlFor="fecha_inicio" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Fecha de Inicio *
                   </label>
-                  <input
-                    type="date"
-                    name="fecha_inicio"
-                    id="fecha_inicio"
-                    required
-                    value={formData.fecha_inicio}
-                    onChange={handleChange}
-                    min={new Date().toISOString().split('T')[0]}
-                    className="block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
-                  />
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <CalendarDaysIcon className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      type="date"
+                      name="fecha_inicio"
+                      id="fecha_inicio"
+                      required
+                      value={formData.fecha_inicio}
+                      onChange={handleChange}
+                      min={new Date().toISOString().split('T')[0]}
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+                    />
+                  </div>
                 </div>
 
                 <div>
                   <label htmlFor="fecha_termino" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Fecha de Término *
                   </label>
-                  <input
-                    type="date"
-                    name="fecha_termino"
-                    id="fecha_termino"
-                    required
-                    value={formData.fecha_termino}
-                    onChange={handleChange}
-                    min={formData.fecha_inicio || new Date().toISOString().split('T')[0]}
-                    className="block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
-                  />
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <CalendarDaysIcon className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      type="date"
+                      name="fecha_termino"
+                      id="fecha_termino"
+                      required
+                      value={formData.fecha_termino}
+                      onChange={handleChange}
+                      min={formData.fecha_inicio || new Date().toISOString().split('T')[0]}
+                      className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Planilla de Estudiantes */}
-            <div className="bg-teal-50 dark:bg-teal-900/20 rounded-lg p-6">
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 }} className="bg-teal-50 dark:bg-teal-900/20 rounded-lg p-6">
               <h3 className="text-lg font-semibold text-teal-900 dark:text-teal-300 mb-4 flex items-center gap-2">
                 <DocumentArrowUpIcon className="w-5 h-5" />
                 Planilla de Estudiantes
@@ -403,10 +429,10 @@ const SolicitudRotacion = () => {
                   </div>
                 )}
               </div>
-            </div>
+            </motion.div>
 
             {/* Comentarios */}
-            <div>
+            <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 }}>
               <label htmlFor="comentarios" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Comentarios Adicionales
               </label>
@@ -416,10 +442,10 @@ const SolicitudRotacion = () => {
                 rows={4}
                 value={formData.comentarios}
                 onChange={handleChange}
-                className="block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent resize-none"
+                className="block w-full px-3 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 focus:border-transparent resize-none"
                 placeholder="Información adicional sobre la rotación..."
               />
-            </div>
+            </motion.div>
 
             {/* Botones */}
             <div className="flex justify-end gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
@@ -441,7 +467,7 @@ const SolicitudRotacion = () => {
               </Button>
             </div>
           </form>
-        </div>
+        </motion.div>
       </main>
     </div>
   );

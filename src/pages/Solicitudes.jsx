@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence, useInView, animate } from 'framer-motion';
 import { supabase } from '../supabaseClient';
 import Button from '../components/UI/Button';
 import HeaderCentroFormador from '../components/UI/HeaderCentroFormador';
@@ -16,6 +17,27 @@ import {
   DocumentTextIcon
 } from '@heroicons/react/24/outline';
 import { useNivelFormacion } from '../context/NivelFormacionContext';
+
+// Componente para animar números
+function Counter({ from = 0, to }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+
+  useEffect(() => {
+    if (isInView) {
+      animate(from, to, {
+        duration: 1.5,
+        onUpdate(value) {
+          if (ref.current) {
+            ref.current.textContent = Math.round(value).toLocaleString('es-CL');
+          }
+        },
+      });
+    }
+  }, [from, to, isInView]);
+
+  return <span ref={ref}>{from}</span>;
+}
 
 const PortalSolicitudes = () => {
   const navigate = useNavigate();
@@ -138,6 +160,26 @@ const PortalSolicitudes = () => {
     });
   };
 
+  // Variantes de animación para Framer Motion
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.07,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: 'spring', stiffness: 100 },
+    },
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
@@ -159,8 +201,8 @@ const PortalSolicitudes = () => {
       />
 
       {/* Botón Nueva Solicitud */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-        <div className="flex justify-end">
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <div className="flex justify-end ">
           <Button
             variant="primary"
             onClick={() => navigate('/solicitar')}
@@ -170,55 +212,60 @@ const PortalSolicitudes = () => {
             Nueva Solicitud
           </Button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Contenido */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-500">
         {/* Estadísticas */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.div variants={itemVariants} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:shadow-md hover:-translate-y-1">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Total</p>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white">{estadisticas.total}</p>
+                <p className="text-4xl font-bold text-gray-900 dark:text-white"><Counter to={estadisticas.total} /></p>
               </div>
-              <BuildingOffice2Icon className="w-12 h-12 text-gray-400 dark:text-gray-500" />
+              <div className="p-3 bg-gray-100 dark:bg-gray-700/50 rounded-lg"><DocumentTextIcon className="w-6 h-6 text-gray-500 dark:text-gray-400" /></div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+          <motion.div variants={itemVariants} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:shadow-md hover:-translate-y-1">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Pendientes</p>
-                <p className="text-3xl font-bold text-yellow-600 dark:text-yellow-500">{estadisticas.pendientes}</p>
+                <p className="text-4xl font-bold text-yellow-600 dark:text-yellow-500"><Counter to={estadisticas.pendientes} /></p>
               </div>
-              <ClockIcon className="w-12 h-12 text-yellow-400 dark:text-yellow-500" />
+              <div className="p-3 bg-yellow-100 dark:bg-yellow-900/40 rounded-lg"><ClockIcon className="w-6 h-6 text-yellow-600 dark:text-yellow-400" /></div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+          <motion.div variants={itemVariants} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:shadow-md hover:-translate-y-1">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Aprobadas</p>
-                <p className="text-3xl font-bold text-green-600 dark:text-green-500">{estadisticas.aprobadas}</p>
+                <p className="text-4xl font-bold text-green-600 dark:text-green-500"><Counter to={estadisticas.aprobadas} /></p>
               </div>
-              <CheckCircleIcon className="w-12 h-12 text-green-400 dark:text-green-500" />
+              <div className="p-3 bg-green-100 dark:bg-green-900/40 rounded-lg"><CheckCircleIcon className="w-6 h-6 text-green-600 dark:text-green-400" /></div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+          <motion.div variants={itemVariants} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 transition-all duration-300 hover:shadow-md hover:-translate-y-1">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Rechazadas</p>
-                <p className="text-3xl font-bold text-red-600 dark:text-red-500">{estadisticas.rechazadas}</p>
+                <p className="text-4xl font-bold text-red-600 dark:text-red-500"><Counter to={estadisticas.rechazadas} /></p>
               </div>
-              <XCircleIcon className="w-12 h-12 text-red-400 dark:text-red-500" />
+              <div className="p-3 bg-red-100 dark:bg-red-900/40 rounded-lg"><XCircleIcon className="w-6 h-6 text-red-600 dark:text-red-400" /></div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Filtros */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6 transition-colors duration-300">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-6 transition-colors duration-300">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <FunnelIcon className="w-5 h-5 text-gray-400 dark:text-gray-500" />
@@ -234,9 +281,9 @@ const PortalSolicitudes = () => {
                 <button
                   key={filtro.key}
                   onClick={() => setFiltroEstado(filtro.key)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
                     filtroEstado === filtro.key
-                      ? 'bg-teal-100 dark:bg-teal-900 text-teal-800 dark:text-teal-200 border border-teal-200 dark:border-teal-700'
+                      ? 'bg-teal-600 text-white shadow-md'
                       : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
                   }`}
                 >
@@ -245,10 +292,10 @@ const PortalSolicitudes = () => {
               ))}
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Lista de Solicitudes */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 transition-colors duration-300 overflow-hidden">
           {solicitudesFiltradas.length === 0 ? (
             <div className="p-12 text-center">
               <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -273,51 +320,56 @@ const PortalSolicitudes = () => {
               )}
             </div>
           ) : (
-            <div className="divide-y divide-gray-200 dark:divide-gray-700">
+            <motion.div
+              className="divide-y divide-gray-200 dark:divide-gray-700"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
               {solicitudesFiltradas.map((solicitud) => (
-                <div key={solicitud.id} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                          {solicitud.especialidad}
-                        </h3>
-                        <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border ${
-                          getEstadoColor(solicitud.estado)
-                        }`}>
-                          {getEstadoIcon(solicitud.estado)}
-                          {solicitud.estado.charAt(0).toUpperCase() + solicitud.estado.slice(1)}
-                        </span>
+                <motion.div key={solicitud.id} variants={itemVariants}>
+                  <div className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors flex items-center justify-between">
+                    <div className="flex items-center gap-4 flex-1">
+                      <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                        solicitud.estado === 'pendiente' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400' :
+                        solicitud.estado === 'aprobada' ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400' :
+                        'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400'
+                      }`}>
+                        {getEstadoIcon(solicitud.estado)}
                       </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600 dark:text-gray-400">
-                        <div className="flex items-center gap-2">
-                          <UserGroupIcon className="w-4 h-4" />
-                          <span>{solicitud.numero_cupos} cupos</span>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                            {solicitud.especialidad}
+                          </h3>
+                          <span className={`hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
+                            solicitud.estado === 'pendiente' ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400' :
+                            solicitud.estado === 'aprobada' ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400' :
+                            'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400'
+                          }`}>
+                            {solicitud.estado.charAt(0).toUpperCase() + solicitud.estado.slice(1)}
+                          </span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <CalendarDaysIcon className="w-4 h-4" />
-                          <span>{formatearFecha(solicitud.fecha_inicio)} - {formatearFecha(solicitud.fecha_termino)}</span>
+                        
+                        <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mt-1">
+                          <div className="flex items-center gap-1.5">
+                            <UserGroupIcon className="w-4 h-4" />
+                            <span>{solicitud.numero_cupos} cupos</span>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <CalendarDaysIcon className="w-4 h-4" />
+                            <span>{formatearFecha(solicitud.fecha_inicio)}</span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <ClockIcon className="w-4 h-4" />
-                          <span>Solicitado el {formatearFecha(solicitud.created_at)}</span>
-                        </div>
+                        
+                        {solicitud.motivo_rechazo && (
+                          <div className="mt-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                            <p className="text-sm text-red-800 dark:text-red-300">
+                              <strong>Motivo de rechazo:</strong> {solicitud.motivo_rechazo}
+                            </p>
+                          </div>
+                        )}
                       </div>
-                      
-                      {solicitud.comentarios && (
-                        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-                          {solicitud.comentarios}
-                        </p>
-                      )}
-                      
-                      {solicitud.motivo_rechazo && (
-                        <div className="mt-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                          <p className="text-sm text-red-800 dark:text-red-300">
-                            <strong>Motivo de rechazo:</strong> {solicitud.motivo_rechazo}
-                          </p>
-                        </div>
-                      )}
                     </div>
                     
                     <div className="ml-6">
@@ -330,17 +382,29 @@ const PortalSolicitudes = () => {
                       </button>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           )}
         </div>
       </main>
 
       {/* Modal de Detalle */}
-      {modalDetalle && solicitudSeleccionada && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto transition-colors duration-300">
+      <AnimatePresence>
+        {modalDetalle && solicitudSeleccionada && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 dark:bg-opacity-70 flex items-center justify-center p-4 z-50"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 50 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 50 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto transition-colors duration-300"
+            >
             <div className="p-6 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white">Detalle de Solicitud</h2>
@@ -419,9 +483,10 @@ const PortalSolicitudes = () => {
                 Cerrar
               </Button>
             </div>
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

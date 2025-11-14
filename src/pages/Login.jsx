@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
+import { motion } from 'framer-motion';
 import { BuildingOffice2Icon, EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 
 const Login = () => {
@@ -54,18 +55,32 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 flex items-center justify-center p-4">
-      <div className="max-w-md w-full">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 80, damping: 15, duration: 0.8 }}
+        className="max-w-md w-full"
+      >
         {/* Logo y Título */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-teal-600 rounded-2xl mb-4 shadow-lg">
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: 'spring', stiffness: 120, damping: 15, delay: 0.2 }}
+            className="inline-flex items-center justify-center w-20 h-20 bg-teal-600 rounded-2xl mb-4 shadow-lg"
+          >
             <BuildingOffice2Icon className="w-12 h-12 text-white" />
-          </div>
+          </motion.div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Portal de Centros Formadores</h1>
           <p className="text-gray-600">Ingresa con tu cuenta institucional</p>
         </div>
 
         {/* Formulario */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ type: 'spring', stiffness: 80, damping: 15, delay: 0.4 }} 
+          className="bg-white rounded-2xl shadow-xl p-8">
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
               {error}
@@ -88,7 +103,7 @@ const Login = () => {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors"
                   placeholder="correo@universidad.cl"
                 />
               </div>
@@ -109,7 +124,7 @@ const Login = () => {
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors"
                   placeholder="••••••••"
                 />
               </div>
@@ -132,8 +147,8 @@ const Login = () => {
               </Link>
             </p>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };
