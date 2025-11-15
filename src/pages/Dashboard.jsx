@@ -296,6 +296,7 @@ const PortalDashboard = () => {
                 {[
                   { title: 'Solicitar Cupos', desc: 'Nueva solicitud de cupos clínicos', icon: DocumentTextIcon, path: '/solicitar', color: 'teal' },
                   { title: 'Solicitud de Rotación', desc: 'Gestiona rotaciones de estudiantes', icon: ClockIcon, path: '/solicitud-rotacion', color: 'purple' },
+                  { title: 'Solicitudes de Rotación', desc: 'Ver estado de rotaciones enviadas', icon: CheckCircleIcon, path: '/solicitudes-rotacion', color: 'indigo' },
                   { title: 'Seguimiento Estudiantes', desc: 'Asistencia y observaciones en tiempo real', icon: BuildingOffice2Icon, path: '/seguimiento-estudiantes', color: 'green' },
                   { title: 'Gestión Documental', desc: 'Sube certificados y documentos', icon: DocumentTextIcon, path: '/gestion-documental', color: 'blue' },
                   { title: 'Mis Solicitudes', desc: 'Revisa el estado de tus solicitudes', icon: CheckCircleIcon, path: '/solicitudes', color: 'orange' },

@@ -27,6 +27,7 @@ const PortalRegistro = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [mostrarExito, setMostrarExito] = useState(false);
 
   // Especialidades según nivel de formación
   const especialidadesPregrado = [
@@ -159,8 +160,13 @@ const PortalRegistro = () => {
 
       if (vinculoError) throw vinculoError;
 
-      // Redirigir al login con mensaje de éxito
-      navigate('/login?registro=exitoso');
+      // Mostrar modal de éxito
+      setMostrarExito(true);
+      
+      // Redirigir al login después de 3 segundos
+      setTimeout(() => {
+        navigate('/login?registro=exitoso');
+      }, 3000);
     } catch (err) {
       setError(err.message || 'Error al registrar. Intenta nuevamente.');
       console.error('Error en registro:', err);
@@ -202,7 +208,7 @@ const PortalRegistro = () => {
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Sección: Datos del Centro Formador */}
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ type: 'spring', stiffness: 80, damping: 15, delay: 0.4 }} className="bg-teal-50 dark:bg-teal-900/20 rounded-lg p-6 space-y-6">
-              <h3 className="text-lg font-semibold text-teal-900 dark:text-teal-300">Datos del Centro Formador</h3>
+              <h3 className="text-lg font-semibold text-black dark:text-white">Datos del Centro Formador</h3>
               
               <div>
                 <label htmlFor="nombre_centro" className="block text-sm font-medium text-gray-700 mb-2">
@@ -273,17 +279,22 @@ const PortalRegistro = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="codigo_centro" className="block text-sm font-medium text-gray-700 mb-2">
-                    Código/RUT
+                    Código de la Institución *
                   </label>
                   <input
                     type="text"
                     name="codigo_centro"
                     id="codigo_centro"
+                    required
                     value={formData.codigo_centro}
                     onChange={handleChange}
-                    className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors"
-                    placeholder="12.345.678-9"
+                    maxLength={10}
+                    className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-colors uppercase"
+                    placeholder="UOH, UCHILE, USACH"
                   />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Abreviación del nombre (ej: UOH, UCHILE, USACH)
+                  </p>
                 </div>
 
                 <div>
@@ -330,7 +341,7 @@ const PortalRegistro = () => {
 
             {/* Sección: Datos del Coordinador */}
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ type: 'spring', stiffness: 80, damping: 15, delay: 0.5 }} className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 space-y-6">
-              <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-300">Datos del Coordinador</h3>
+              <h3 className="text-lg font-semibold text-black dark:text-white">Datos del Coordinador</h3>
               
               <div>
                 <label htmlFor="nombre_coordinador" className="block text-sm font-medium text-gray-700 mb-2">
@@ -414,7 +425,7 @@ const PortalRegistro = () => {
 
             {/* Sección: Credenciales */}
             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ type: 'spring', stiffness: 80, damping: 15, delay: 0.6 }} className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-6 space-y-6">
-              <h3 className="text-lg font-semibold text-purple-900 dark:text-purple-300">Credenciales de Acceso</h3>
+              <h3 className="text-lg font-semibold text-black dark:text-white">Credenciales de Acceso</h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -481,6 +492,74 @@ const PortalRegistro = () => {
           </div>
         </motion.div>
       </motion.div>
+
+      {/* Modal de Éxito */}
+      {mostrarExito && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+              className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6"
+            >
+              <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <motion.path
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ delay: 0.3, duration: 0.5 }}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </motion.div>
+            
+            <motion.h2
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="text-2xl font-bold text-gray-900 mb-3"
+            >
+              ¡Registro Exitoso!
+            </motion.h2>
+            
+            <motion.p
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="text-gray-600 mb-2"
+            >
+              El centro formador <span className="font-semibold text-teal-600">{formData.nombre_centro}</span> ha sido registrado correctamente.
+            </motion.p>
+            
+            <motion.p
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="text-sm text-gray-500 mb-6"
+            >
+              Código: <span className="font-mono font-semibold text-teal-600">{formData.codigo_centro}</span>
+            </motion.p>
+            
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.7 }}
+              className="flex items-center justify-center gap-2 text-sm text-gray-500"
+            >
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-teal-600"></div>
+              <span>Redirigiendo al inicio de sesión...</span>
+            </motion.div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };
