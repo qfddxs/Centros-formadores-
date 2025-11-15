@@ -198,6 +198,7 @@ const PortalSolicitudes = () => {
         titulo="Mis Solicitudes"
         subtitulo={`${centroInfo?.centro_formador?.nombre} - ${nivelFormacion === 'pregrado' ? 'Pregrado' : 'Postgrado'}`}
         icono={DocumentTextIcon}
+        codigoCentro={centroInfo?.centro_formador?.codigo}
       />
 
       {/* Botón Nueva Solicitud */}

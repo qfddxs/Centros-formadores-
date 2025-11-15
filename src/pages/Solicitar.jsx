@@ -249,6 +249,7 @@ const PortalSolicitar = () => {
         titulo="Solicitar Cupos Clínicos"
         subtitulo={`${centroInfo?.centro_formador?.nombre} - ${nivelFormacion === 'pregrado' ? 'Pregrado' : 'Postgrado'}`}
         icono={DocumentTextIcon}
+        codigoCentro={centroInfo?.centro_formador?.codigo}
       />
 
       {/* Contenido */}

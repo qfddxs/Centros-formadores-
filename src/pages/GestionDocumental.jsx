@@ -193,6 +193,7 @@ const GestionDocumental = () => {
         titulo="Gestión Documental"
         subtitulo={centroInfo?.centro_formador?.nombre}
         icono={DocumentTextIcon}
+        codigoCentro={centroInfo?.centro_formador?.codigo}
       />
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-in fade-in duration-500">

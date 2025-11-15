@@ -7,7 +7,8 @@ const HeaderCentroFormador = ({
   subtitulo, 
   icono: Icono,
   mostrarBotonVolver = true,
-  rutaVolver = '/dashboard'
+  rutaVolver = '/dashboard',
+  codigoCentro = null
 }) => {
   const navigate = useNavigate();
 
@@ -15,32 +16,21 @@ const HeaderCentroFormador = ({
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between">
-          {/* Lado izquierdo: Logo IP Chile + Botón volver + Título */}
+          {/* Lado izquierdo: Código Centro + Botón volver + Título */}
           <div className="flex items-center gap-4">
-            {/* Logo IP Chile */}
-            <a
-              href="https://www.ipchile.cl/encuentra-tu-carrera/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 hover:bg-gray-50 rounded-lg transition-all group flex-shrink-0"
-              title="Instituto Profesional de Chile"
-            >
-              <img 
-                src="https://www.ipchile.cl/wp-content/uploads/2021/03/logo-ipchile.png" 
-                alt="IP Chile Logo" 
-                className="h-10 w-auto object-contain group-hover:scale-105 transition-transform"
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.nextElementSibling.style.display = 'flex';
-                }}
-              />
-              <div className="hidden w-16 h-10 bg-blue-600 rounded-lg items-center justify-center group-hover:bg-blue-700 transition-colors">
-                <span className="text-white font-bold text-lg">IP</span>
+            {/* Código del Centro Formador */}
+            {codigoCentro && (
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 bg-gradient-to-br from-teal-500 to-teal-600 dark:from-teal-600 dark:to-teal-700 rounded-xl flex items-center justify-center shadow-md hover:shadow-lg transition-all hover:scale-105">
+                  <span className="text-white font-bold text-sm tracking-tight">
+                    {codigoCentro}
+                  </span>
+                </div>
               </div>
-            </a>
+            )}
 
             {/* Separador vertical */}
-            <div className="h-10 w-px bg-gray-300"></div>
+            {codigoCentro && <div className="h-10 w-px bg-gray-300 dark:bg-gray-600"></div>}
 
             {mostrarBotonVolver && (
               <button
